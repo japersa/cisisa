@@ -64,15 +64,7 @@ const PostalCode = ({
                               <th scope="col">D_MNPIO</th>
                               <th scope="col">D_ESTADO</th>
                               <th scope="col">D_CIUDAD</th>
-                              <th scope="col">D_CP</th>
-                              <th scope="col">C_ESTADO</th>
-                              <th scope="col">C_OFICINA</th>
-                              <th scope="col">C_CP</th>
-                              <th scope="col">C_TIPO_ASENTA</th>
-                              <th scope="col">C_MNPIO</th>
-                              <th scope="col">ID_ASENTA_CPCONS</th>
                               <th scope="col">D_ZONA</th>
-                              <th scope="col">C_CVE_CIUDAD</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -84,15 +76,7 @@ const PostalCode = ({
                                 <td scope="row">{ele.d_mnpio}</td>
                                 <td scope="row">{ele.d_estado}</td>
                                 <td scope="row">{ele.d_ciudad}</td>
-                                <td scope="row">{ele.d_CP}</td>
-                                <td scope="row">{ele.c_estado}</td>
-                                <td scope="row">{ele.c_oficina}</td>
-                                <td scope="row">{ele.c_CP}</td>
-                                <td scope="row">{ele.c_tipo_asenta}</td>
-                                <td scope="row">{ele.c_mnpio}</td>
-                                <td scope="row">{ele.id_asenta_cpcons}</td>
                                 <td scope="row">{ele.d_zona}</td>
-                                <td scope="row">{ele.c_cve_ciudad}</td>
                               </tr>
                             ))}
                           </tbody>

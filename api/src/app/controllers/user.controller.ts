@@ -31,7 +31,7 @@ export class UserController {
   constructor(
     private readonly _service: UserService,
     @Inject('DATABASE_CONNECTION') private readonly sequelize,
-  ) { }
+  ) {}
 
   /**
    *
@@ -52,7 +52,7 @@ export class UserController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Get()
   public async findAll(
     @Response() res,
@@ -86,7 +86,7 @@ export class UserController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Get('/:id')
   public async findOne(@Response() res, @Param() param) {
     const user = await this._service.findOne({
@@ -130,7 +130,7 @@ export class UserController {
     status: HttpStatus.FOUND,
     description: 'User already exists.',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Post()
   public async create(@Response() res, @Body() createUserDto: UserDto) {
     const userExists = await this._service.findOne({
@@ -173,7 +173,7 @@ export class UserController {
     status: HttpStatus.FOUND,
     description: 'User already exists.',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Patch('/:id')
   public async update(@Param() param, @Response() res, @Body() body) {
     const userExists = await this._service.findOne({
@@ -226,7 +226,7 @@ export class UserController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Patch('/changeState/:id')
   public async changeState(@Param() param, @Response() res, @Body() body) {
     const options = { where: { idUser: param.id } };

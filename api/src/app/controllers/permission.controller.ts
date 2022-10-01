@@ -23,7 +23,7 @@ import { Op, Sequelize } from 'sequelize';
 @ApiTags('permissions')
 @Controller('permissions')
 export class PermissionController {
-  constructor(private readonly _service: PermissionService) { }
+  constructor(private readonly _service: PermissionService) {}
 
   /**
    *
@@ -44,7 +44,7 @@ export class PermissionController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Get()
   public async findAll(@Response() res, @Query() options: PaginateOptions) {
     const { page, offset, search } = options;
@@ -97,7 +97,7 @@ export class PermissionController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Get('/:id')
   public async findOne(@Response() res, @Param() param) {
     const permission = await this._service.findOne({
@@ -136,7 +136,7 @@ export class PermissionController {
     status: HttpStatus.FOUND,
     description: 'Permission already exists.',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Post()
   public async create(@Response() res, @Body() permissionDto: PermissionDto) {
     const permissionExists = await this._service.findOne({
@@ -175,7 +175,7 @@ export class PermissionController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Patch('/changeState/:id')
   public async changeState(@Param() param, @Response() res, @Body() body) {
     const options = { where: { idPermission: param.id } };
@@ -218,7 +218,7 @@ export class PermissionController {
     status: HttpStatus.FOUND,
     description: 'Permission already exists.',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Patch('/:id')
   public async update(@Param() param, @Response() res, @Body() body) {
     const permissionExists = await this._service.findOne({

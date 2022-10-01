@@ -29,7 +29,7 @@ export class RoleController {
   constructor(
     private readonly _service: RoleService,
     private readonly _servicePermissionRole: PermissionRoleService,
-  ) { }
+  ) {}
 
   /**
    *
@@ -50,7 +50,7 @@ export class RoleController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Get()
   public async findAll(
     @Response() res,
@@ -81,11 +81,8 @@ export class RoleController {
                   [Op.like]: `%${options.search}%`,
                 },
               },
-              Sequelize.where(Sequelize.col('company.description'), {
-                [Op.like]: `%${options.search}%`,
-              }),
             ],
-          }
+          },
         ],
       },
     });
@@ -115,7 +112,7 @@ export class RoleController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Get('/:id')
   public async findOne(@Response() res, @Param() param) {
     let role = await this._service.findOne({
@@ -129,7 +126,6 @@ export class RoleController {
       name: '',
       description: '',
       isActive: true,
-      idCompany: 0,
       permissions: [],
     };
     if (role) {
@@ -179,7 +175,7 @@ export class RoleController {
     status: HttpStatus.FOUND,
     description: 'Role already exists.',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Post()
   public async create(@Response() res, @Body() roleDto: RoleDto) {
     const roleExists = await this._service.findOne({
@@ -197,7 +193,7 @@ export class RoleController {
       order: [['idRole', 'DESC']],
       limit: 1,
     });
-    if (roleDto.multiselectRef.length > 0) {
+    if (roleDto.multiselectRef && roleDto.multiselectRef.length > 0) {
       for (let index = 0; index < roleDto.multiselectRef.length; index++) {
         const element = roleDto.multiselectRef[index];
         const permissionRoleExists = await this._servicePermissionRole.findAll({
@@ -245,7 +241,7 @@ export class RoleController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Patch('/changeState/:id')
   public async changeState(@Param() param, @Response() res, @Body() body) {
     const options = { where: { idRole: param.id } };
@@ -288,7 +284,7 @@ export class RoleController {
     status: HttpStatus.FOUND,
     description: 'Role already exists.',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Patch('/:id')
   public async update(@Param() param, @Response() res, @Body() body) {
     const roleExists = await this._service.findOne({

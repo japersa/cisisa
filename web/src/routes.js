@@ -16,14 +16,17 @@ import SignUp from "./pages/SignUp";
 import ForgotPassword from "./pages/ForgotPassword";
 import PostalCode from "./pages/PostalCode";
 
-
 const Routes = () => (
   <BrowserRouter>
     <Switch>
-      <PublicRoute path="/" exact restricted={true} component={PostalCode} />
-      <PublicRoute path="/login" exact restricted={true} component={SignIn} />
+      <PublicRoute path="/" exact restricted={true} component={SignIn} />
       <PublicRoute path="/signUp" exact restricted={true} component={SignUp} />
-      <PublicRoute path="/forgotPassword" exact restricted={true} component={ForgotPassword} />
+      <PublicRoute
+        path="/forgotPassword"
+        exact
+        restricted={true}
+        component={ForgotPassword}
+      />
       <PrivateRoute
         exact
         path="/dashboard"

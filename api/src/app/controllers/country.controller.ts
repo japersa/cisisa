@@ -45,7 +45,7 @@ export class CountryController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Get()
   public async findAll(@Response() res, @Query() options: PaginateOptions) {
     const { page, offset, search } = options;
@@ -98,7 +98,7 @@ export class CountryController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Get('/:id')
   public async findOne(@Response() res, @Param() param) {
     const country = await this._service.findOne({
@@ -137,7 +137,7 @@ export class CountryController {
     status: HttpStatus.FOUND,
     description: 'Country already exists.',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Post()
   public async create(@Response() res, @Body() countryDto: CountryDto) {
     countryDto.description = countryDto.description.toUpperCase();
@@ -145,7 +145,9 @@ export class CountryController {
       where: { description: countryDto.description.toUpperCase() },
     });
     if (countryExists) {
-      return res.status(HttpStatus.FOUND).json({ message: 'Country already exists!' });
+      return res
+        .status(HttpStatus.FOUND)
+        .json({ message: 'Country already exists!' });
     }
     const country = await this._service.create(countryDto);
     return res.status(HttpStatus.OK).json(country);
@@ -175,7 +177,7 @@ export class CountryController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Patch('/changeState/:id')
   public async changeState(@Param() param, @Response() res, @Body() body) {
     const options = { where: { idCountry: param.id } };
@@ -218,7 +220,7 @@ export class CountryController {
     status: HttpStatus.FOUND,
     description: 'Country already exists.',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Patch('/:id')
   public async update(@Param() param, @Response() res, @Body() body) {
     body.description = body.description.toUpperCase();
@@ -226,7 +228,9 @@ export class CountryController {
       where: { description: body.description.toUpperCase() },
     });
     if (countryExists && param.id != countryExists.idCountry) {
-      return res.status(HttpStatus.FOUND).json({ message: 'Country already exists!' });
+      return res
+        .status(HttpStatus.FOUND)
+        .json({ message: 'Country already exists!' });
     }
 
     const options = { where: { idCountry: param.id } };

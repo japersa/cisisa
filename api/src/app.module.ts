@@ -13,8 +13,6 @@ import { PermissionModule } from './infrastructure/modules/permission.module';
 import { PermissionRoleModule } from './infrastructure/modules/permission_role.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { UploadModule } from './infrastructure/modules/upload.module';
-import { CompanyModule } from './infrastructure/modules/company.module';
-import { PrbModule } from './infrastructure/modules/prb.module';
 
 @Module({
   imports: [
@@ -36,9 +34,7 @@ import { PrbModule } from './infrastructure/modules/prb.module';
     PermissionModule,
     PermissionRoleModule,
     UploadModule,
-    CompanyModule,
-    PrbModule
   ],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

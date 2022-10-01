@@ -46,7 +46,7 @@ export class CityController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Get()
   public async findAll(@Response() res, @Query() options: PaginateOptions) {
     const { page, offset, search } = options;
@@ -113,7 +113,7 @@ export class CityController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Get('/department/:idDepartment')
   public async findAllByDepartment(@Response() res, @Param() param) {
     const cities = await this._service.findAll({
@@ -154,7 +154,7 @@ export class CityController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Get('/:id')
   public async findOne(@Response() res, @Param() param) {
     const city = await this._service.findOne({
@@ -193,7 +193,7 @@ export class CityController {
     status: HttpStatus.FOUND,
     description: 'City already exists.',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Post()
   public async create(@Response() res, @Body() cityDto: CityDto) {
     cityDto.description = cityDto.description.toUpperCase();
@@ -236,7 +236,7 @@ export class CityController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Patch('/changeState/:id')
   public async changeState(@Param() param, @Response() res, @Body() body) {
     const options = { where: { idCity: param.id } };
@@ -279,7 +279,7 @@ export class CityController {
     status: HttpStatus.FOUND,
     description: 'City already exists.',
   })
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Patch('/:id')
   public async update(@Param() param, @Response() res, @Body() body) {
     body.description = body.description.toUpperCase();

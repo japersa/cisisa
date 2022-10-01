@@ -1,22 +1,22 @@
-import { call, put, takeLatest } from 'redux-saga/effects';
-import request from '../../utils/request';
+import { call, put, takeLatest } from "redux-saga/effects";
+import request from "../../utils/request";
 
 function* login({ data }) {
   try {
     yield put({
-      type: 'LOGIN_REQUESTING',
+      type: "LOGIN_REQUESTING",
     });
 
     yield put({
-      type: 'SHOW_LOADING',
+      type: "SHOW_LOADING",
     });
 
     const requestURL = `${process.env.REACT_APP_API_URL}/api/v1/auth`;
 
     const response = yield call(request, requestURL, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     });
@@ -29,9 +29,8 @@ function* login({ data }) {
       return elem.permission.name;
     });
 
-
     yield put({
-      type: 'HIDE_LOADING',
+      type: "HIDE_LOADING",
     });
 
     yield put({
@@ -39,16 +38,16 @@ function* login({ data }) {
       payload: permissions,
     });
 
-    yield put({ type: 'SIGN_IN', payload: user });
+    yield put({ type: "SIGN_IN", payload: user });
 
+    /* 
+    if (permissions.length > 0) { */
+    localStorage.setItem("token", payload.accessToken);
 
-    if (permissions.length > 0) {
-      localStorage.setItem('token', payload.accessToken)
-
-      yield put({
-        type: 'LOGIN_SUCCESS',
-      });
-    } else {
+    yield put({
+      type: "LOGIN_SUCCESS",
+    });
+    /*     } else {
       yield put({
         type: 'SHOW_ALERT',
         value: {
@@ -60,7 +59,7 @@ function* login({ data }) {
       yield put({
         type: 'LOGIN_ERROR',
       });
-    }
+    } */
   } catch (error) {
     yield put({
       type: "DEFINE_PERMISSIONS",
@@ -68,29 +67,27 @@ function* login({ data }) {
     });
 
     yield put({
-      type: 'HIDE_LOADING',
+      type: "HIDE_LOADING",
     });
 
     yield put({
-      type: 'SHOW_ALERT',
+      type: "SHOW_ALERT",
       value: {
-        type: 'danger',
-        title: 'Falied login',
-        message: 'Invalid username or password'
-      }
+        type: "danger",
+        title: "Falied login",
+        message: "Invalid username or password",
+      },
     });
     yield put({
-      type: 'LOGIN_ERROR',
+      type: "LOGIN_ERROR",
     });
   }
 }
 
-
-
 function* validateToken() {
   try {
     yield put({
-      type: 'LOGIN_REQUESTING',
+      type: "LOGIN_REQUESTING",
     });
 
     const requestURL = `${process.env.REACT_APP_API_URL}/api/v1/auth/validate-token`;
@@ -116,25 +113,24 @@ function* validateToken() {
       payload: permissions,
     });
 
-    yield put({ type: 'RESTORE_SESION', payload: response });
-
+    yield put({ type: "RESTORE_SESION", payload: response });
   } catch (error) {
     yield put({
       type: "DEFINE_PERMISSIONS",
       payload: [],
     });
     yield put({
-      type: 'SHOW_ALERT',
+      type: "SHOW_ALERT",
       value: {
-        type: 'danger',
-        title: 'Falied login',
-        message: 'Invalid token'
-      }
+        type: "danger",
+        title: "Falied login",
+        message: "Invalid token",
+      },
     });
   }
 }
 
 export function* watchLogin() {
-  yield takeLatest('LOGIN_REQUEST', login);
-  yield takeLatest('VALIDATE_TOKEN', validateToken);
+  yield takeLatest("LOGIN_REQUEST", login);
+  yield takeLatest("VALIDATE_TOKEN", validateToken);
 }

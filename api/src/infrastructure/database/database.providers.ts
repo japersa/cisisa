@@ -10,8 +10,6 @@ import { Neighborhood } from 'src/domain/entities/neighborhood.entity';
 import { Role } from 'src/domain/entities/role.entity';
 import { Permission } from 'src/domain/entities/permission.entity';
 import { PermissionRole } from 'src/domain/entities/permission_role.entity';
-import { Company } from 'src/domain/entities/company.entity';
-import { Prb } from 'src/domain/entities/prb.entity';
 
 export const databaseProviders = [
   {
@@ -38,8 +36,6 @@ export const databaseProviders = [
         Role,
         Permission,
         PermissionRole,
-        Company,
-        Prb
       ]);
       await sequelize.sync(
         process.env.APP_ENV === 'development' && {

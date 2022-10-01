@@ -24,11 +24,6 @@ export class UserService extends CrudService<User> {
       ...options,
       where: {
         [Op.and]: [
-          req.user.role.idCompany && {
-            '$role.idCompany$': {
-              [Op.eq]: req.user.role.idCompany,
-            },
-          },
           search != '' && {
             [Op.or]: [
               {

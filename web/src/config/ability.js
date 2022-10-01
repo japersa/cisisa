@@ -24,8 +24,6 @@ const currentAuth = {
   userName: "japersa92",
   role: {
     description: "Administrador",
-    idCompany: 1,
-    idRole: 1,
     isActive: true,
     name: "Administrador",
   },

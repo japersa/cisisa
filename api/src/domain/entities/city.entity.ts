@@ -9,6 +9,8 @@ import {
   BelongsTo,
   HasMany,
 } from 'sequelize-typescript';
+import { Area } from './area.entity';
+import { Company } from './company.entity';
 import { Department } from './department.entity';
 import { Neighborhood } from './neighborhood.entity';
 
@@ -34,6 +36,9 @@ export class City extends Model<City> {
 
   @Column({ type: DataType.BOOLEAN, allowNull: true, defaultValue: true })
   isActive: boolean;
+
+  @HasMany(() => Area)
+  areas: Area[];
 
   @HasMany(() => Neighborhood)
   neighborhoods: Neighborhood[];

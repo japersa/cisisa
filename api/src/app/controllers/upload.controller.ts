@@ -17,9 +17,10 @@ import { JwtAuthGuard } from '../guards/jwt.guard';
 
 @Controller('uploads')
 export class UploadController {
-  constructor() {}
+  constructor(
+  ) { }
 
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(@UploadedFile() file, @Response() res) {
@@ -27,7 +28,7 @@ export class UploadController {
     res.status(HttpStatus.OK).json(file);
   }
 
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('/multiple')
   @UseInterceptors(AnyFilesInterceptor())
   public async uploadFiles(@UploadedFiles() files, @Response() res) {
@@ -35,18 +36,12 @@ export class UploadController {
     res.status(HttpStatus.OK).json(files);
   }
 
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get(':fileName')
-  public async getFile(
-    @Param('fileName') fileName,
-    @Res() res,
-    @Request() req,
-  ): Promise<any> {
+  public async getFile(@Param('fileName') fileName, @Res() res, @Request() req,): Promise<any> {
     return res.sendFile(fileName, { root: 'uploads' }, (err) => {
       if (err) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: 'The file does not exists' });
+        return res.status(HttpStatus.NOT_FOUND).json({ message: 'The file does not exists' });
       }
     });
   }

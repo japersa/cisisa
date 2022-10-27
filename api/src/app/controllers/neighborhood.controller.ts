@@ -19,11 +19,15 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PaginateResponseDto } from 'src/domain/dto/paginated-response.dto';
 import { Op, Sequelize } from 'sequelize';
 import { City } from 'src/domain/entities/city.entity';
+import { ZoneService } from 'src/domain/services/zone.service';
 
 @ApiTags('neighborhoods')
 @Controller('neighborhoods')
 export class NeighborhoodController {
-  constructor(private readonly _service: NeighborhoodService) {}
+  constructor(
+    private readonly _service: NeighborhoodService,
+    private readonly _serviceZone: ZoneService,
+  ) {}
 
   /**
    *
@@ -44,7 +48,7 @@ export class NeighborhoodController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get()
   public async findAll(@Response() res, @Query() options: PaginateOptions) {
     const { page, offset, search } = options;
@@ -118,11 +122,64 @@ export class NeighborhoodController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('/city/:idCity')
   public async findAllByCity(@Response() res, @Param() param) {
     const neighborhoods = await this._service.findAll({
       where: { idCity: param.idCity },
+      include: [
+        {
+          model: City,
+          as: 'city',
+        },
+      ],
+      raw: true,
+      nest: true,
+      order: [['description', 'ASC']],
+    });
+
+    if (neighborhoods) {
+      return res.status(HttpStatus.OK).json(neighborhoods);
+    }
+
+    return res
+      .status(HttpStatus.NOT_FOUND)
+      .json({ message: "Neighborhood doesn't exist!" });
+  }
+
+  /**
+   *
+   * @returns {NeighborhoodDto{}} Returns all neighborhoods by idZone
+   * @param {id} request
+   */
+  @ApiOperation({ summary: 'Search a neighborhoods by zone' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The id has been successfully finded.',
+    type: NeighborhoodDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: "Neighborhood doesn't exist!",
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal server error',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Get('/zone/:idZone')
+  public async findAllByZone(@Response() res, @Param() param) {
+    const zoneSelected = await this._serviceZone.findOne({
+      where: { idZone: param.idZone },
+      raw: true,
+    });
+
+    const neighborhoods = await this._service.findAll({
+      where: { idCity: zoneSelected.idCity },
       include: [
         {
           model: City,
@@ -166,7 +223,7 @@ export class NeighborhoodController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('/:id')
   public async findOne(@Response() res, @Param() param) {
     const neighborhood = await this._service.findOne({
@@ -213,7 +270,7 @@ export class NeighborhoodController {
     status: HttpStatus.FOUND,
     description: 'Neighborhood already exists.',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post()
   public async create(
     @Response() res,
@@ -259,7 +316,7 @@ export class NeighborhoodController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Patch('/changeState/:id')
   public async changeState(@Param() param, @Response() res, @Body() body) {
     const options = { where: { idNeighborhood: param.id } };
@@ -302,7 +359,7 @@ export class NeighborhoodController {
     status: HttpStatus.FOUND,
     description: 'Neighborhood already exists.',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Patch('/:id')
   public async update(@Param() param, @Response() res, @Body() body) {
     body.description = body.description.toUpperCase();

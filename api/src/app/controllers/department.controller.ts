@@ -45,7 +45,7 @@ export class DepartmentController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get()
   public async findAll(@Response() res, @Query() options: PaginateOptions) {
     const { page, offset, search } = options;
@@ -109,7 +109,7 @@ export class DepartmentController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('/country/:idCountry')
   public async findAllByCountry(@Response() res, @Param() param) {
     const departments = await this._service.findAll({
@@ -150,7 +150,7 @@ export class DepartmentController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('/:id')
   public async findOne(@Response() res, @Param() param) {
     const department = await this._service.findOne({
@@ -189,7 +189,7 @@ export class DepartmentController {
     status: HttpStatus.FOUND,
     description: 'Department already exists.',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post()
   public async create(@Response() res, @Body() departmentDto: DepartmentDto) {
     departmentDto.description = departmentDto.description.toUpperCase();
@@ -236,7 +236,7 @@ export class DepartmentController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Patch('/changeState/:id')
   public async changeState(@Param() param, @Response() res, @Body() body) {
     const options = { where: { idDepartment: param.id } };
@@ -279,7 +279,7 @@ export class DepartmentController {
     status: HttpStatus.FOUND,
     description: 'Department already exists.',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Patch('/:id')
   public async update(@Param() param, @Response() res, @Body() body) {
     body.description = body.description.toUpperCase();

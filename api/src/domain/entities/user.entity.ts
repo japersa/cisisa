@@ -9,7 +9,9 @@ import {
   BelongsTo,
   HasMany,
 } from 'sequelize-typescript';
+import { Headquarters } from './headquarters.entity';
 import { Role } from './role.entity';
+import { Route } from './route.entity';
 
 @Table({
   tableName: 'TBL_MTR_USER',
@@ -58,5 +60,13 @@ export class User extends Model<User> {
   @Column({ type: DataType.TEXT, allowNull: true })
   remember_token: string;
 
+  @ForeignKey(() => Headquarters)
+  @Column({ field: 'idHeadquarters', allowNull: true })
+  idHeadquarters: number;
+
+  @HasMany(() => Route)
+  routes: Route[];
+
   @BelongsTo(() => Role, 'idRole') role: Role;
+  @BelongsTo(() => Headquarters, 'idHeadquarters') headquarters: Headquarters;
 }

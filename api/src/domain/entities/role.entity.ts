@@ -9,6 +9,7 @@ import {
   ForeignKey,
   BelongsTo,
 } from 'sequelize-typescript';
+import { Company } from './company.entity';
 import { PermissionRole } from './permission_role.entity';
 import { User } from './user.entity';
 
@@ -31,10 +32,15 @@ export class Role extends Model<Role> {
   @Column({ type: DataType.BOOLEAN, allowNull: true, defaultValue: true })
   isActive: boolean;
 
+  @ForeignKey(() => Company)
+  @Column({ field: 'idCompany' })
+  idCompany: number;
+
   @HasMany(() => User)
   users: User[];
 
   @HasMany(() => PermissionRole)
   permissionsRoles: PermissionRole[];
 
+  @BelongsTo(() => Company, 'idCompany') company: Company;
 }

@@ -43,7 +43,7 @@ export class PermissionRoleController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get()
   public async findAll(@Response() res, @Query() options: PaginateOptions) {
     const permissionRoles = await this._service.paginate(options);
@@ -73,7 +73,7 @@ export class PermissionRoleController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('/:id')
   public async findOne(@Response() res, @Param() param) {
     const permissionRole = await this._service.findOne({
@@ -112,7 +112,7 @@ export class PermissionRoleController {
     status: HttpStatus.FOUND,
     description: 'Permission - role already exists.',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post()
   public async create(
     @Response() res,
@@ -161,7 +161,7 @@ export class PermissionRoleController {
     status: HttpStatus.FOUND,
     description: 'Permission - role already exists.',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Patch('/:id')
   public async update(@Param() param, @Response() res, @Body() body) {
     const permRoleExists = await this._service.findOne({

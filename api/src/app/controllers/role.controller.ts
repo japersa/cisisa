@@ -22,6 +22,7 @@ import { Role } from 'src/domain/entities/role.entity';
 import { Op, Sequelize } from 'sequelize';
 import { PermissionRole } from 'src/domain/entities/permission_role.entity';
 import { PermissionRoleService } from 'src/domain/services/permission_role.service';
+import { Company } from 'src/domain/entities/company.entity';
 
 @ApiTags('roles')
 @Controller('roles')
@@ -50,7 +51,7 @@ export class RoleController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get()
   public async findAll(
     @Response() res,
@@ -81,10 +82,24 @@ export class RoleController {
                   [Op.like]: `%${options.search}%`,
                 },
               },
+              Sequelize.where(Sequelize.col('company.description'), {
+                [Op.like]: `%${options.search}%`,
+              }),
             ],
+          },
+          req.user.role.idCompany && {
+            idCompany: {
+              [Op.eq]: req.user.role.idCompany,
+            },
           },
         ],
       },
+      include: [
+        {
+          model: Company,
+          as: 'company',
+        },
+      ],
     });
     return res.status(HttpStatus.OK).json(roles);
   }
@@ -112,11 +127,17 @@ export class RoleController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('/:id')
   public async findOne(@Response() res, @Param() param) {
     let role = await this._service.findOne({
       where: { idRole: param.id },
+      include: [
+        {
+          model: Company,
+          as: 'company',
+        },
+      ],
       raw: true,
       nest: true,
     });
@@ -126,6 +147,7 @@ export class RoleController {
       name: '',
       description: '',
       isActive: true,
+      idCompany: 0,
       permissions: [],
     };
     if (role) {
@@ -142,6 +164,7 @@ export class RoleController {
         name: role.name,
         description: role.description,
         isActive: role.isActive,
+        idCompany: role.idCompany,
       };
       objRole = { ...objRole, permissions: permissions };
       return res.status(HttpStatus.OK).json(objRole);
@@ -175,7 +198,7 @@ export class RoleController {
     status: HttpStatus.FOUND,
     description: 'Role already exists.',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post()
   public async create(@Response() res, @Body() roleDto: RoleDto) {
     const roleExists = await this._service.findOne({
@@ -193,7 +216,7 @@ export class RoleController {
       order: [['idRole', 'DESC']],
       limit: 1,
     });
-    if (roleDto.multiselectRef && roleDto.multiselectRef.length > 0) {
+    if (roleDto.multiselectRef.length > 0) {
       for (let index = 0; index < roleDto.multiselectRef.length; index++) {
         const element = roleDto.multiselectRef[index];
         const permissionRoleExists = await this._servicePermissionRole.findAll({
@@ -241,7 +264,7 @@ export class RoleController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Patch('/changeState/:id')
   public async changeState(@Param() param, @Response() res, @Body() body) {
     const options = { where: { idRole: param.id } };
@@ -284,7 +307,7 @@ export class RoleController {
     status: HttpStatus.FOUND,
     description: 'Role already exists.',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Patch('/:id')
   public async update(@Param() param, @Response() res, @Body() body) {
     const roleExists = await this._service.findOne({

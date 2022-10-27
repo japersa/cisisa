@@ -30,4 +30,6 @@ export class UserDto {
   readonly userName: string;
   @ApiProperty()
   readonly isActive: boolean;
+  @ApiProperty()
+  readonly idHeadquarters: number;
 }

@@ -7,6 +7,8 @@ import { Op, Sequelize } from 'sequelize';
 import { UserDto } from '../dto/user.dto';
 import { MailService } from './mail.service';
 import { Role } from '../entities/role.entity';
+import { Company } from '../entities/company.entity';
+import { Headquarters } from '../entities/headquarters.entity';
 
 @Injectable()
 export class UserService extends CrudService<User> {
@@ -24,6 +26,11 @@ export class UserService extends CrudService<User> {
       ...options,
       where: {
         [Op.and]: [
+          req.user.role.idCompany && {
+            '$role.idCompany$': {
+              [Op.eq]: req.user.role.idCompany,
+            },
+          },
           search != '' && {
             [Op.or]: [
               {
@@ -72,6 +79,9 @@ export class UserService extends CrudService<User> {
               Sequelize.where(Sequelize.col('role.company.description'), {
                 [Op.like]: `%${options.search}%`,
               }),
+              Sequelize.where(Sequelize.col('headquarters.nameHeadquarters'), {
+                [Op.like]: `%${options.search}%`,
+              }),
             ],
           },
         ],
@@ -80,6 +90,16 @@ export class UserService extends CrudService<User> {
         {
           model: Role,
           as: 'role',
+          include: [
+            {
+              model: Company,
+              as: 'company',
+            },
+          ],
+        },
+        {
+          model: Headquarters,
+          as: 'headquarters',
         },
       ],
       attributes: {

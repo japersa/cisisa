@@ -10,7 +10,7 @@ import {
   Query,
   Response,
   UseGuards,
-  Request,
+  Request
 } from '@nestjs/common';
 import { AuthService } from 'src/domain/services/auth.service';
 import { ResetPasswordDto } from 'src/domain/dto/reset-password.dto';
@@ -28,7 +28,7 @@ import { PaginateOptions } from 'src/domain/services/crud.service';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   /**
    *
@@ -161,25 +161,17 @@ export class AuthController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Patch('/change-password/:id')
   public async changePassword(@Param() param, @Response() res, @Body() body) {
     const user = await this.authService.changePassword(param.id, body);
     return res.status(HttpStatus.OK).json(user);
   }
 
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('/change-password')
-  public async changePasswordFromOldPassword(
-    @Param() param,
-    @Response() res,
-    @Body() body,
-    @Request() req,
-  ) {
-    const user = await this.authService.changeOldPassword(
-      req.user.idUser,
-      body,
-    );
+  public async changePasswordFromOldPassword(@Param() param, @Response() res, @Body() body, @Request() req) {
+    const user = await this.authService.changeOldPassword(req.user.idUser, body);
     return res.status(HttpStatus.OK).json(user);
   }
 
@@ -211,7 +203,7 @@ export class AuthController {
     return res.status(HttpStatus.OK).json(user);
   }
 
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('/validate-token')
   public async validateToken(
     @Response() res,

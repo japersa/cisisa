@@ -21,6 +21,7 @@ import { PaginateResponseDto } from 'src/domain/dto/paginated-response.dto';
 import { User } from 'src/domain/entities/user.entity';
 import { Role } from 'src/domain/entities/role.entity';
 import { Op, Sequelize, QueryTypes } from 'sequelize';
+import { Company } from 'src/domain/entities/company.entity';
 import * as bcrypt from 'bcryptjs';
 import { PermissionRole } from 'src/domain/entities/permission_role.entity';
 import { Permission } from 'src/domain/entities/permission.entity';
@@ -32,6 +33,56 @@ export class UserController {
     private readonly _service: UserService,
     @Inject('DATABASE_CONNECTION') private readonly sequelize,
   ) {}
+
+  async getQuery(query, params) {
+    return await this.sequelize.query(query, {
+      replacements: params,
+      logging: console.log,
+      plain: false,
+      type: QueryTypes.SELECT,
+    });
+  }
+  /**
+   *
+   * @returns {PaginateResponseDto{}} Returns all users with theirs pagination
+   * @param {PaginateOptions} request
+   */
+  @ApiOperation({ summary: 'Read all users' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Users has been successfully finded.',
+    type: PaginateResponseDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal server error',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Get('/couriers')
+  public async findAllCouriers(
+    @Response() res,
+    @Query() options: PaginateOptions,
+    @Request() req,
+  ) {
+    const sqlRoute = `SELECT U.*, H.nameHeadquarters
+    FROM TBL_MTR_USER U
+      INNER JOIN TBL_MTR_ROLE R ON U.idRole = R.idRole
+      INNER JOIN TBL_MTR_PERMISSION_ROLE PR ON U.idRole = PR.idRole
+      INNER JOIN TBL_MTR_PERMISSION P ON PR.idPermission = P.idPermission
+      LEFT OUTER JOIN TBL_MTR_HEADQUARTERS H ON U.idHeadquarters = H.idHeadquarters 
+    WHERE P.name = :permission AND (:company IS NULL OR R.idCompany = :company);`;
+    const params = {
+      company: req.user.role.idCompany,
+      permission: 'feature:courier',
+    };
+    const result = await this.getQuery(sqlRoute, params);
+
+    return res.status(HttpStatus.OK).json(result);
+  }
 
   /**
    *
@@ -52,13 +103,22 @@ export class UserController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get()
   public async findAll(
     @Response() res,
     @Query() options: PaginateOptions,
     @Request() req,
   ) {
+    options.where = {
+      [Op.and]: [
+        req.user.role.idCompany && {
+          idCompany: {
+            [Op.eq]: req.user.role.idCompany,
+          },
+        },
+      ],
+    };
     const users = await this._service.getUsers(options, req);
     return res.status(HttpStatus.OK).json(users);
   }
@@ -86,7 +146,7 @@ export class UserController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('/:id')
   public async findOne(@Response() res, @Param() param) {
     const user = await this._service.findOne({
@@ -95,6 +155,12 @@ export class UserController {
         {
           model: Role,
           as: 'role',
+          include: [
+            {
+              model: Company,
+              as: 'company',
+            },
+          ],
         },
       ],
     });
@@ -130,7 +196,7 @@ export class UserController {
     status: HttpStatus.FOUND,
     description: 'User already exists.',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post()
   public async create(@Response() res, @Body() createUserDto: UserDto) {
     const userExists = await this._service.findOne({
@@ -173,7 +239,7 @@ export class UserController {
     status: HttpStatus.FOUND,
     description: 'User already exists.',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Patch('/:id')
   public async update(@Param() param, @Response() res, @Body() body) {
     const userExists = await this._service.findOne({
@@ -226,7 +292,7 @@ export class UserController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Internal server error',
   })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Patch('/changeState/:id')
   public async changeState(@Param() param, @Response() res, @Body() body) {
     const options = { where: { idUser: param.id } };

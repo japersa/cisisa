@@ -8,5 +8,8 @@ export class RoleDto {
   @ApiProperty()
   readonly description: string;
   readonly isActive: boolean;
+  @ApiProperty()
+  @IsNotEmpty()
+  readonly idCompany: number;
   multiselectRef: Array<any>;
 }
